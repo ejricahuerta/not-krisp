@@ -3,6 +3,7 @@ using NotKrisp.API.Data;
 using NotKrisp.API.Models;
 using NotKrisp.API.Services;
 using NotKrisp.API.Services.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,16 +12,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddMemoryCache();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins", builder =>
     {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
 });
+
+
 
 // Configure PostgreSQL connection
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
@@ -30,6 +32,14 @@ if (!string.IsNullOrEmpty(databaseUrl))
     var userInfo = uri.UserInfo.Split(':');
     var connectionString = $"Host={uri.Host};Port={5432};Database={uri.LocalPath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
     builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
+}
+else
+{
+    var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new Exception("Connection string not found");
+    }
 }
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -50,6 +60,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// CORS must be before HTTPS redirection
 app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 app.UseAuthorization();

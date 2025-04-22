@@ -38,26 +38,39 @@ public class GitHubController : ControllerBase
             _logger.LogError(ex, "Error getting GitHub authorization URL. RedirectUri: {RedirectUri}", redirectUri);
             return StatusCode(500, new { error = "Failed to get authorization URL", details = ex.Message });
         }
+
     }
 
     [HttpGet("callback")]
-    public async Task<IActionResult> HandleCallback([FromQuery] string code)
+    public async Task<IActionResult> HandleCallback([FromQuery] string code, [FromQuery] string redirectUri)
     {
         _logger.LogInformation("Received GitHub callback with code: {Code}", code);
 
         try
         {
             _logger.LogInformation("Calling GitHubService to handle authorization callback");
-            var success = await _gitHubService.HandleAuthorizationCallback(code);
+            var accessToken = await _gitHubService.HandleAuthorizationCallback(code);
 
-            if (success)
+            if (!string.IsNullOrEmpty(accessToken))
             {
                 _logger.LogInformation("Successfully completed GitHub integration");
-                return Redirect(_configuration["FrontendUrl"] + "/auth/success");
+                var userInfo = await _gitHubService.GetUserInfo(accessToken);
+                return Ok(new
+                {
+                    success = true,
+                    accessToken,
+                    userInfo = new
+                    {
+                        username = userInfo.Login,
+                        email = userInfo.Email,
+                        name = userInfo.Name,
+                        avatarUrl = userInfo.AvatarUrl
+                    }
+                });
             }
 
             _logger.LogWarning("Failed to complete GitHub integration");
-            return Redirect(_configuration["FrontendUrl"] + "/auth/denied");
+            return Unauthorized(new { success = false, message = "Failed to complete GitHub integration" });
         }
         catch (Exception ex)
         {
@@ -65,7 +78,7 @@ public class GitHubController : ControllerBase
             _logger.LogError(ex.Message);
             _logger.LogError(ex.StackTrace);
             _logger.LogError(ex.InnerException?.Message);
-            return Redirect(_configuration["FrontendUrl"] + "/auth/denied");
+            return Redirect(redirectUri);
         }
     }
 
@@ -114,8 +127,29 @@ public class GitHubController : ControllerBase
 
         try
         {
+            var authHeader = Request.Headers["Authorization"].ToString();
+            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            {
+                _logger.LogWarning("Missing or invalid authorization header");
+                return Unauthorized(new { error = "Missing or invalid authorization header" });
+            }
+
+            var accessToken = authHeader.Substring("Bearer ".Length).Trim();
+
+            _logger.LogInformation("Access token: {AccessToken}", accessToken);
+            var maskedToken = accessToken.Length > 8
+                ? $"{accessToken.Substring(0, 4)}...{accessToken.Substring(accessToken.Length - 4)}"
+                : "***";
+            _logger.LogInformation("Extracted access token from authorization header: {MaskedToken}", maskedToken);
+
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                _logger.LogWarning("Access token is empty after extraction");
+                return Unauthorized(new { error = "Access token is empty" });
+            }
+
             _logger.LogInformation("Calling GitHubService to get repositories");
-            var repositories = await _gitHubService.GetRepositories();
+            var repositories = await _gitHubService.GetRepositories(accessToken);
 
             _logger.LogInformation("Successfully retrieved {Count} repositories", repositories.Count());
             return Ok(repositories);
@@ -124,6 +158,84 @@ public class GitHubController : ControllerBase
         {
             _logger.LogError(ex, "Error getting GitHub repositories");
             return StatusCode(500, new { error = "Failed to get repositories", details = ex.Message });
+        }
+    }
+
+    [HttpGet("projects")]
+    public async Task<IActionResult> GetProjects()
+    {
+        _logger.LogInformation("Received request to get GitHub projects");
+
+        try
+        {
+            var authHeader = Request.Headers["Authorization"].ToString();
+            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            {
+                _logger.LogWarning("Missing or invalid authorization header");
+                return Unauthorized(new { error = "Missing or invalid authorization header" });
+            }
+
+            var accessToken = authHeader.Substring("Bearer ".Length).Trim();
+
+            _logger.LogInformation("Calling GitHubService to get projects");
+            var projects = await _gitHubService.GetProjects(accessToken);
+
+            _logger.LogInformation("Successfully retrieved {Count} projects", projects.Count());
+            return Ok(projects);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting GitHub projects");
+            return StatusCode(500, new { error = "Failed to get projects", details = ex.Message });
+        }
+    }
+
+    [HttpGet("issues")]
+    public async Task<IActionResult> GetIssues([FromQuery] string repositoryOwner, [FromQuery] string repositoryName)
+    {
+        _logger.LogInformation(
+            "Received request to get issues for repository: {Owner}/{Name}",
+            repositoryOwner,
+            repositoryName
+        );
+
+        try
+        {
+            // Validate input parameters
+            if (string.IsNullOrWhiteSpace(repositoryOwner))
+            {
+                return BadRequest(new { error = "Repository owner is required" });
+            }
+
+            if (string.IsNullOrWhiteSpace(repositoryName))
+            {
+                return BadRequest(new { error = "Repository name is required" });
+            }
+
+            // Get access token from Authorization header
+            var authHeader = Request.Headers.Authorization.ToString();
+            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+            {
+                return Unauthorized(new { error = "Missing or invalid authorization token" });
+            }
+
+            var accessToken = authHeader.Substring("Bearer ".Length);
+
+            _logger.LogInformation("Calling GitHubService to get issues");
+            var issues = await _gitHubService.GetIssues(accessToken, repositoryOwner, repositoryName);
+            _logger.LogInformation("Successfully retrieved {Count} issues", issues.Count());
+
+            return Ok(issues);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Error getting GitHub issues for repository: {Owner}/{Name}",
+                repositoryOwner,
+                repositoryName
+            );
+            return StatusCode(500, new { error = "Failed to get issues", details = ex.Message });
         }
     }
 }
