@@ -1,0 +1,80 @@
+services:
+  - type: web
+    name: backend
+    env: docker
+    dockerfilePath: app/backend/Dockerfile
+    plan: starter
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: postgres-db
+          property: connectionString
+    regions:
+      - oregon
+
+  - type: web
+    name: frontend
+    env: docker
+    dockerfilePath: app/frontend/Dockerfile
+    plan: starter
+    autoDeploy: true
+    envVars:
+      - key: VITE_API_URL
+        value: https://backend.onrender.com
+    regions:
+      - oregon
+
+  - type: web
+    name: not-krisp-backend-staging
+    env: node
+    buildCommand: cd app/backend/NotKrisp.API && dotnet publish -c Release -o out
+    startCommand: cd app/backend/NotKrisp.API/out && dotnet NotKrisp.API.dll
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Staging
+      - key: ASPNETCORE_URLS
+        value: http://+:5000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: postgres-db
+          property: connectionString
+    healthCheckPath: /health
+    autoDeploy: true
+    branch: staging
+
+  - type: web
+    name: not-krisp-frontend-staging
+    env: node
+    buildCommand: cd app/frontend && npm install && npm run build
+    startCommand: cd app/frontend && npm run start
+    envVars:
+      - key: NODE_ENV
+        value: staging
+      - key: VITE_API_URL
+        value: https://not-krisp-backend-staging.onrender.com
+    healthCheckPath: /
+    autoDeploy: true
+    branch: staging
+
+  - type: web
+    name: not-krisp-db-staging
+    env: docker
+    image: postgres:15
+    envVars:
+      - key: POSTGRES_DB
+        value: notkrisp
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        value: ${POSTGRES_PASSWORD}
+    healthCheckPath: /health
+    autoDeploy: true
+    branch: staging
+
+databases:
+  - type: postgres
+    name: postgres-db
+    plan: starter
+    region: oregon
+    disk: 1 GB
