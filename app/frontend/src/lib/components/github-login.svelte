@@ -4,14 +4,16 @@
   import { toast } from "$lib/components/ui/toast";
 
   let isLoading = false;
-  let apiUrl = import.meta.env.VITE_API_URL;
-  let githubClientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const githubClientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
   console.log(apiUrl);
+  console.log(githubClientId.substring(0, 5) + "...");
   async function handleGitHubLogin() {
     isLoading = true;
     try {
       // src/routes/integrations/github/+page.svelte or similar
-      const redirectUri = "http://localhost:5192/api/github/callback"; // Backend route
+
+      const redirectUri = `${apiUrl}/api/github/callback`; // Backend route
 
       const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=repo`;
 
