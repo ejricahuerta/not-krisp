@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NotKrisp.API.Data;
+using NotKrisp.API.Models;
 using NotKrisp.API.Services;
 using NotKrisp.API.Services.Interfaces;
 
@@ -10,6 +11,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 
 // Configure PostgreSQL connection
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
@@ -29,6 +40,7 @@ builder.Services.AddScoped<IMeetingService, MeetingService>();
 builder.Services.AddScoped<ITranscriptionService, TranscriptionService>();
 builder.Services.AddScoped<ISummaryService, SummaryService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<IGitHubService, GitHubService>();
 
 var app = builder.Build();
 
@@ -38,22 +50,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
-
-// use migrate
+// Ensure database is created and migrations are applied
 using (var scope = app.Services.CreateScope())
 {
-    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    logger.LogInformation("Migrating database...");
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.Migrate();
-    logger.LogInformation("Database migrated successfully.");
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
 }
+
+app.Run();
 
 

@@ -81,5 +81,10 @@ namespace NotKrisp.API.Services
                 .Include(s => s.Meeting)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
+
+        public async Task<Summary?> GetSummaryById(int id)
+        {
+            return await _context.Summaries.FindAsync(id);
+        }
     }
 } 

@@ -18,6 +18,7 @@ namespace NotKrisp.API.Data
         public DbSet<Transcription> Transcriptions { get; set; }
         public DbSet<Summary> Summaries { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<IntegrationSettings> IntegrationSettings { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +55,10 @@ namespace NotKrisp.API.Data
                     d => d.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     d => new Dictionary<string, string>(d)
                 ));
+
+            modelBuilder.Entity<IntegrationSettings>()
+                .HasIndex(s => s.IntegrationType)
+                .IsUnique();
         }
     }
 } 
