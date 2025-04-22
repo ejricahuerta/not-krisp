@@ -82,9 +82,9 @@
       </div>
     </div>
     <div class="lg:block hidden lg:col-span-2">
-      <img 
-        src="/images/hero.svg" 
-        alt="Hero" 
+      <img
+        src="/images/hero.svg"
+        alt="Hero"
         width="500"
         height="500"
         loading="lazy"
@@ -95,7 +95,7 @@
 
   <!-- Value Propositions Section -->
   <section class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-32">
-    <div class="p-8 bg-gray-50 rounded-xl">
+    <div class="p-8 bg-gray-100 rounded-xl">
       <div class="flex items-center gap-3 mb-4">
         <Mic class="w-6 h-6 text-primary" />
         <h3 class="text-2xl font-semibold">Smart Listening</h3>
@@ -105,7 +105,7 @@
         in real-time.
       </p>
     </div>
-    <div class="p-8 bg-gray-50 rounded-xl">
+    <div class="p-8 bg-gray-100 rounded-xl">
       <div class="flex items-center gap-3 mb-4">
         <FileText class="w-6 h-6 text-primary" />
         <h3 class="text-2xl font-semibold">Summarization Engine</h3>
@@ -115,7 +115,7 @@
         conversations into clean action items.
       </p>
     </div>
-    <div class="p-8 bg-gray-50 rounded-xl">
+    <div class="p-8 bg-gray-100 rounded-xl">
       <div class="flex items-center gap-3 mb-4">
         <Zap class="w-6 h-6 text-primary" />
         <h3 class="text-2xl font-semibold">Instant Ticket Sync</h3>
@@ -125,7 +125,7 @@
         fatigue.
       </p>
     </div>
-    <div class="p-8 bg-gray-50 rounded-xl">
+    <div class="p-8 bg-gray-100 rounded-xl">
       <div class="flex items-center gap-3 mb-4">
         <Shield class="w-6 h-6 text-primary" />
         <h3 class="text-2xl font-semibold">Secure & Private</h3>
@@ -184,7 +184,7 @@
     </h2>
     <div class="flex flex-wrap justify-center gap-8 max-w-4xl mx-auto">
       <div
-        class="w-32 h-32 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center p-6"
+        class="w-32 h-32 bg-gray-100 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center p-6"
       >
         <img
           src="images/logo/google.svg"
@@ -196,7 +196,7 @@
         />
       </div>
       <div
-        class="w-32 h-32 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center p-6"
+        class="w-32 h-32 bg-gray-100 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center p-6"
       >
         <img
           src="images/logo/slack.svg"
@@ -208,7 +208,7 @@
         />
       </div>
       <div
-        class="w-32 h-32 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center p-6"
+        class="w-32 h-32 bg-gray-100 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center p-6"
       >
         <img
           src="images/logo/github.svg"
@@ -226,26 +226,26 @@
   <section class="mb-32">
     <h2 class="text-4xl font-bold text-center mb-16">Built For</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-      <div class="p-8 bg-gray-50 rounded-xl">
+      <div class="p-8 bg-gray-100 rounded-xl">
         <h3 class="text-2xl font-semibold mb-4">Product Teams</h3>
         <p class="text-gray-600">
           Tired of scattered decisions? Keep everything organized and
           actionable.
         </p>
       </div>
-      <div class="p-8 bg-gray-50 rounded-xl">
+      <div class="p-8 bg-gray-100 rounded-xl">
         <h3 class="text-2xl font-semibold mb-4">Engineers</h3>
         <p class="text-gray-600">
           Want clear actionables? Get precise tasks from every meeting.
         </p>
       </div>
-      <div class="p-8 bg-gray-50 rounded-xl">
+      <div class="p-8 bg-gray-100 rounded-xl">
         <h3 class="text-2xl font-semibold mb-4">Managers</h3>
         <p class="text-gray-600">
           Need async clarity? Stay in the loop without attending every meeting.
         </p>
       </div>
-      <div class="p-8 bg-gray-50 rounded-xl">
+      <div class="p-8 bg-gray-100 rounded-xl">
         <h3 class="text-2xl font-semibold mb-4">Startups</h3>
         <p class="text-gray-600">
           Moving fast, staying lean? Automate your meeting follow-ups.
