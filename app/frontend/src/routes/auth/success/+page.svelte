@@ -1,23 +1,27 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button/index.js";
   import { CheckCircle } from "lucide-svelte";
+  import { page } from "$app/stores";
+  import { browser } from "$app/environment";
+  import { goto } from "$app/navigation";
   import { onMount } from "svelte";
 
-  let countdown = 5;
-  let redirectTimer: number;
+  let redirectUrl = "/";
 
   onMount(() => {
-    redirectTimer = window.setInterval(() => {
-      countdown--;
-      if (countdown <= 0) {
-        window.clearInterval(redirectTimer);
-        window.location.href = "/dashboard";
-      }
-    }, 1000);
+    if (!browser) return;
+    
+    // Get redirect URL from localStorage
+    const storedRedirect = localStorage.getItem("redirectAfterAuth");
+    if (storedRedirect) {
+      redirectUrl = storedRedirect;
+      localStorage.removeItem("redirectAfterAuth");
+    }
 
-    return () => {
-      window.clearInterval(redirectTimer);
-    };
+    // Redirect after a short delay
+    setTimeout(() => {
+      goto(redirectUrl);
+    }, 2000);
   });
 </script>
 
@@ -31,9 +35,6 @@
         <h1 class="text-3xl font-bold">Success!</h1>
         <p class="text-muted-foreground text-balance">
           You have been successfully authenticated.
-        </p>
-        <p class="text-sm text-muted-foreground">
-          Redirecting to dashboard in {countdown} seconds...
         </p>
       </div>
       <div class="grid gap-4">
