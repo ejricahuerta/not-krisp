@@ -11,14 +11,14 @@ namespace NotKrisp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SummariesController : BaseController
+    public class SummaryController : BaseController
     {
         private readonly ISummaryService _summaryService;
-        private readonly ILogger<SummariesController> _logger;
+        private readonly ILogger<SummaryController> _logger;
 
-        public SummariesController(
+        public SummaryController(
             ISummaryService summaryService,
-            ILogger<SummariesController> logger)
+            ILogger<SummaryController> logger)
         {
             _summaryService = summaryService;
             _logger = logger;
@@ -202,7 +202,7 @@ namespace NotKrisp.API.Controllers
             try
             {
                 _logger.LogInformation("Generating summary and tickets for meeting: {MeetingId}", request.MeetingId);
-
+                
                 var result = await _summaryService.GenerateSummaryAndTicketsAsync(
                     request.Transcription,
                     request.MeetingId);
@@ -217,4 +217,9 @@ namespace NotKrisp.API.Controllers
         }
     }
 
-}
+    public class GenerateSummaryRequest
+    {
+        public Guid MeetingId { get; set; }
+        public string Transcription { get; set; } = string.Empty;
+    }
+} 

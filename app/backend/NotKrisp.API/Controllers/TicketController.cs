@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NotKrisp.API.Models;
 using NotKrisp.API.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace NotKrisp.API.Controllers
 {
@@ -12,10 +13,12 @@ namespace NotKrisp.API.Controllers
     public class TicketController : BaseController
     {
         private readonly ITicketService _ticketService;
+        private readonly ILogger<TicketController> _logger;
 
-        public TicketController(ITicketService ticketService)
+        public TicketController(ITicketService ticketService, ILogger<TicketController> logger)
         {
             _ticketService = ticketService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -45,12 +48,13 @@ namespace NotKrisp.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                _logger.LogError(ex, "Error getting ticket by id: {Id}", id);
+                return StatusCode(500, "An error occurred while retrieving the ticket");
             }
         }
 
         [HttpGet("meeting/{meetingId}")]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetTicketsByMeeting(Guid meetingId)
+        public async Task<ActionResult<IEnumerable<Ticket>>> GetByMeeting(Guid meetingId)
         {
             try
             {
@@ -59,7 +63,8 @@ namespace NotKrisp.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                _logger.LogError(ex, "Error getting tickets for meeting: {MeetingId}", meetingId);
+                return StatusCode(500, "An error occurred while retrieving tickets");
             }
         }
 

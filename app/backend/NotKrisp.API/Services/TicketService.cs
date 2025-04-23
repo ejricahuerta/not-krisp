@@ -18,6 +18,7 @@ namespace NotKrisp.API.Services
         public async Task<IEnumerable<Ticket>> GetTicketsByMeetingAsync(Guid meetingId)
         {
             return await _dbSet
+                .Include(t => t.Meeting)
                 .Where(t => t.MeetingId == meetingId)
                 .OrderByDescending(t => t.CreatedAt)
                 .ToListAsync();
@@ -90,4 +91,4 @@ namespace NotKrisp.API.Services
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
     }
-} 
+}

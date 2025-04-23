@@ -1,8 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace NotKrisp.API.Models;
 
 public class Issue
 {
-    public string Id { get; set; } = string.Empty;
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
     public int Number { get; set; }
     public string Title { get; set; } = string.Empty;
     public string? Body { get; set; }
@@ -25,4 +30,4 @@ public class Assignee
 {
     public string Login { get; set; } = string.Empty;
     public string AvatarUrl { get; set; } = string.Empty;
-} 
+}

@@ -4,22 +4,25 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NotKrisp.API.Models;
 using NotKrisp.API.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace NotKrisp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MeetingController : BaseController
+    public class MeetingsController : BaseController
     {
         private readonly IMeetingService _meetingService;
+        private readonly ILogger<MeetingsController> _logger;
 
-        public MeetingController(IMeetingService meetingService)
+        public MeetingsController(IMeetingService meetingService, ILogger<MeetingsController> logger)
         {
             _meetingService = meetingService;
+            _logger = logger;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Meeting>>> GetMeetings()
+        public async Task<ActionResult<IEnumerable<Meeting>>> GetAll()
         {
             try
             {
@@ -28,24 +31,27 @@ namespace NotKrisp.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                _logger.LogError(ex, "Error getting all meetings");
+                return StatusCode(500, "An error occurred while retrieving meetings");
             }
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Meeting>> GetMeeting(Guid id)
+        public async Task<ActionResult<Meeting>> GetById(Guid id)
         {
             try
             {
                 var meeting = await _meetingService.GetByIdAsync(id);
                 if (meeting == null)
+                {
                     return NotFound();
-
+                }
                 return Ok(meeting);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                _logger.LogError(ex, "Error getting meeting by id: {Id}", id);
+                return StatusCode(500, "An error occurred while retrieving the meeting");
             }
         }
 
@@ -60,7 +66,7 @@ namespace NotKrisp.API.Controllers
                 meeting.Status = "Created";
 
                 var createdMeeting = await _meetingService.CreateAsync(meeting);
-                return CreatedAtAction(nameof(GetMeeting), new { id = createdMeeting.Id }, createdMeeting);
+                return CreatedAtAction(nameof(GetById), new { id = createdMeeting.Id }, createdMeeting);
             }
             catch (Exception ex)
             {
@@ -189,4 +195,4 @@ namespace NotKrisp.API.Controllers
             }
         }
     }
-} 
+}

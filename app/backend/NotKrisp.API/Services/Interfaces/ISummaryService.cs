@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using NotKrisp.API.Models;
+using NotKrisp.API.Services;
 
 namespace NotKrisp.API.Services.Interfaces
 {
@@ -12,5 +13,7 @@ namespace NotKrisp.API.Services.Interfaces
         Task<Summary> UpdateSummaryStatusAsync(Guid id, string status);
         Task<Summary> UpdateSummaryContentAsync(Guid id, string content);
         Task<Summary> UpdateActionItemsAsync(Guid id, List<string> actionItems);
+        Task<SummaryResult> GenerateSummaryAndTicketsAsync(string transcription, Guid meetingId);
+        Task<string> UploadAudioAsync(byte[] fileBytes);
     }
 } 
