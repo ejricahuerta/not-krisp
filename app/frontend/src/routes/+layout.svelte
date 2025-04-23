@@ -74,52 +74,18 @@
         <div class="flex-1 overflow-y-auto">
           <nav class="grid items-start px-2 text-sm font-medium lg:px-4">
             <a
-              href="##"
+              href="/dashboard"
               class="text-muted-foreground hover:text-primary flex items-center gap-3 rounded-lg px-3 py-2 transition-all"
             >
               <House class="h-4 w-4" />
               Dashboard
             </a>
             <a
-              href="##"
+              href="/meetings"
               class="text-muted-foreground hover:text-primary flex items-center gap-3 rounded-lg px-3 py-2 transition-all"
             >
               <Calendar class="h-4 w-4" />
               Meetings
-              <Badge
-                class="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
-              >
-                6
-              </Badge>
-            </a>
-            <a
-              href="/github"
-              class="bg-muted text-primary hover:text-primary flex items-center gap-3 rounded-lg px-3 py-2 transition-all"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="bi bi-github h-4 w-4"
-                viewBox="24 24"
-              >
-                <path
-                  d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"
-                />
-              </svg>
-              GitHub
-            </a>
-            <a
-              href="/integrations"
-              class="text-muted-foreground hover:text-primary flex items-center gap-3 rounded-lg px-3 py-2 transition-all"
-            >
-              <AppWindow class="h-4 w-4" />
-              Integrations
-            </a>
-            <a
-              href="/settings"
-              class="text-muted-foreground hover:text-primary flex items-center gap-3 rounded-lg px-3 py-2 transition-all"
-            >
-              <Settings class="h-4 w-4" />
-              Settings
             </a>
           </nav>
         </div>
@@ -165,68 +131,18 @@
                 <span class="sr-only">Acme Inc</span>
               </a>
               <a
-                href="##"
+                href="/dashboard"
                 class="text-muted-foreground hover:text-foreground mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2"
               >
                 <House class="h-5 w-5" />
                 Dashboard
               </a>
               <a
-                href="##"
+                href="/meetings"
                 class="bg-muted text-foreground hover:text-foreground mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2"
               >
                 <Calendar class="h-5 w-5" />
                 Meetings
-                <Badge
-                  class="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
-                >
-                  6
-                </Badge>
-              </a>
-              <a
-                href="##"
-                class="text-muted-foreground hover:text-foreground mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2"
-              >
-                <Ticket class="h-5 w-5" />
-                Tickets
-              </a>
-              <a
-                href="##"
-                class="text-muted-foreground hover:text-foreground mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2"
-              >
-                <AppWindow class="h-5 w-5" />
-                Integrations
-              </a>
-              <a
-                href="##"
-                class="text-muted-foreground hover:text-foreground mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2"
-              >
-                <Settings class="h-5 w-5" />
-                Settings
-              </a>
-              <a
-                href="/repositories"
-                class="text-muted-foreground hover:text-primary flex items-center gap-4 rounded-xl px-3 py-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="h-4 w-4"
-                >
-                  <path
-                    d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"
-                  />
-                  <path d="M12 8v8" />
-                  <path d="M8 12h8" />
-                </svg>
-                Repositories
               </a>
             </nav>
             <div class="mt-auto">
@@ -253,7 +169,7 @@
               />
               <Input
                 type="search"
-                placeholder="Search products..."
+                placeholder="Search..."
                 class="bg-background w-full appearance-none pl-8 shadow-none md:w-2/3 lg:w-1/3"
               />
             </div>
@@ -311,7 +227,7 @@
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       </header>
-      <main class="flex-1 overflow-y-auto">
+      <main class="">
         {@render children()}
       </main>
     </div>
