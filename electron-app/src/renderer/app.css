@@ -1,0 +1,239 @@
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+:root,
+[data-bs-theme="light"] {
+  --bs-light: #ffffff;
+  --bs-primary: #cf3436;
+  --bs-dark: #151c32;
+  --bs-secondary: #ffffff;
+  --bs-info: #ffffff;
+  --bs-success: #cf3436;
+  --bs-warning: #cf3436;
+  --bs-danger: #cf3436;
+
+  --bs-light-rgb: 255, 255, 255;
+  --bs-primary-rgb: 207, 52, 54;
+  --bs-dark-rgb: 21, 28, 50;
+  --bs-secondary-rgb: 255, 255, 255;
+  --bs-info-rgb: 255, 255, 255;
+  --bs-success-rgb: 207, 52, 54;
+  --bs-warning-rgb: 207, 52, 54;
+  --bs-danger-rgb: 207, 52, 54;
+
+  --bs-primary-text-emphasis: #cf3436;
+  --bs-secondary-text-emphasis: #151c32;
+  --bs-info-text-emphasis: #151c32;
+  --bs-light-text-emphasis: #cf3436;
+  --bs-dark-text-emphasis: #ffffff;
+
+  --bs-primary-bg-subtle: #ffffff;
+  --bs-secondary-bg-subtle: #ffffff;
+  --bs-info-bg-subtle: #ffffff;
+  --bs-light-bg-subtle: #ffffff;
+  --bs-dark-bg-subtle: #151c32;
+
+  --bs-primary-border-subtle: #cf3436;
+  --bs-secondary-border-subtle: #151c32;
+  --bs-info-border-subtle: #151c32;
+  --bs-light-border-subtle: #ffffff;
+  --bs-dark-border-subtle: #cf3436;
+
+  --bs-link-color: #cf3436;
+  --bs-link-hover-color: #151c32;
+
+  --bs-body-bg: #ffffff;
+  --bs-body-color: #151c32;
+  --bs-border-color: #cf3436;
+  --bs-border-radius: 0.375rem;
+  --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+[data-bs-theme="dark"] {
+  --bs-light: #ffffff;
+  --bs-primary: #cf3436;
+  --bs-dark: #151c32;
+  --bs-secondary: #ffffff;
+  --bs-info: #ffffff;
+  --bs-success: #cf3436;
+  --bs-warning: #cf3436;
+  --bs-danger: #cf3436;
+
+  --bs-light-rgb: 255, 255, 255;
+  --bs-primary-rgb: 207, 52, 54;
+  --bs-dark-rgb: 21, 28, 50;
+  --bs-secondary-rgb: 255, 255, 255;
+  --bs-info-rgb: 255, 255, 255;
+  --bs-success-rgb: 207, 52, 54;
+  --bs-warning-rgb: 207, 52, 54;
+  --bs-danger-rgb: 207, 52, 54;
+
+  --bs-body-bg: #151c32;
+  --bs-body-color: #ffffff;
+  --bs-emphasis-color: #ffffff;
+  --bs-secondary-color: #ffffff;
+  --bs-secondary-bg: #151c32;
+  --bs-tertiary-color: #ffffff;
+  --bs-tertiary-bg: #cf3436;
+
+  --bs-primary-text-emphasis: #ffffff;
+  --bs-secondary-text-emphasis: #cf3436;
+  --bs-info-text-emphasis: #ffffff;
+  --bs-light-text-emphasis: #cf3436;
+  --bs-dark-text-emphasis: #ffffff;
+
+  --bs-primary-bg-subtle: #cf3436;
+  --bs-secondary-bg-subtle: #151c32;
+  --bs-info-bg-subtle: #151c32;
+  --bs-light-bg-subtle: #cf3436;
+  --bs-dark-bg-subtle: #ffffff;
+
+  --bs-primary-border-subtle: #ffffff;
+  --bs-secondary-border-subtle: #cf3436;
+  --bs-info-border-subtle: #ffffff;
+  --bs-light-border-subtle: #cf3436;
+  --bs-dark-border-subtle: #ffffff;
+
+  --bs-link-color: #ffffff;
+  --bs-link-hover-color: #cf3436;
+
+  --bs-border-color: #ffffff;
+  --bs-border-radius: 0.375rem;
+  --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+html, body {
+  font-size: .9rem;
+}
+
+/* App-specific styles */
+.app-icon {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  margin-right: 12px;
+}
+
+.app-icon img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.app-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-left: auto;
+}
+
+.app-status.active {
+  background-color: var(--bs-success);
+}
+
+.app-status.inactive {
+  background-color: var(--bs-secondary);
+}
+
+/* Meeting status styles */
+.meeting-status {
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.meeting-status.active {
+  background-color: rgba(var(--bs-success-rgb), 0.1);
+  border: 1px solid rgba(var(--bs-success-rgb), 0.2);
+  color: var(--bs-success);
+}
+
+.meeting-status.inactive {
+  background-color: rgba(var(--bs-secondary-rgb), 0.1);
+  border: 1px solid rgba(var(--bs-secondary-rgb), 0.2);
+  color: var(--bs-secondary);
+}
+
+.meeting-status i {
+  font-size: 1.5rem;
+}
+
+/* Animation keyframes */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animation classes */
+.slide-in {
+  animation: slideIn 0.3s ease forwards;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Loading spinner */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(var(--bs-light-rgb), 0.1);
+  border-top-color: var(--bs-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom focus styles */
+.btn:focus,
+.nav-link:focus {
+  /* Only keep focus outline if needed, but remove box-shadow */
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .row {
+    --bs-gutter-x: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 240px !important;
+  }
+}
+
+/* Global override: Remove all box-shadows for all elements and states */
+*, *::before, *::after, *:hover, *:focus, *:active {
+  box-shadow: none !important;
+}
+

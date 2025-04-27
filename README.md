@@ -21,6 +21,27 @@ not-krisp/
 └── docs/            # Project documentation
 ```
 
+## Environment Variables
+
+The following environment variables are required to run the application. Create a `.env` file in the root directory and add these variables:
+
+```env
+# ASP.NET Core Environment
+ASPNETCORE_ENVIRONMENT=Development
+
+# GitHub OAuth Settings
+GITHUB_CLIENT_ID=your_github_client_id_here
+GITHUB_CLIENT_SECRET=your_github_client_secret_here
+
+# JWT Settings
+JWT_SECRET_KEY=your_jwt_secret_key_here_min_32_chars
+
+# PostgreSQL Settings
+POSTGRES_USER=notkrisp_user
+POSTGRES_PASSWORD=strong_password_here
+POSTGRES_DB=notkrisp_db
+```
+
 ## Getting Started
 
 ### Prerequisites

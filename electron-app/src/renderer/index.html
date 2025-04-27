@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=400, initial-scale=1.0" />
+    <title>Not-Krisp Electron App</title>
+    <link
+      rel="stylesheet"
+      href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="app.css" />
+    <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+  <body class="bg-light">
+    <!-- Custom titlebar -->
+    <div
+      class="custom-titlebar d-flex align-items-center justify-content-between px-3"
+      style="position: fixed; top: 0; left: 0; right: 0; z-index: 1050; height: 44px; min-height: 44px; max-height: 44px; background: var(--bs-dark); border-bottom: 1px solid var(--bs-primary);"
+    >
+      <div class="d-flex align-items-center">
+        <img
+          src="../assets/icons/icon.png"
+          alt="Logo"
+          width="20"
+          height="20"
+          class="me-2"
+        />
+        <span class="fw-bold" style="color: var(--bs-light);">Not-Krisp</span>
+      </div>
+      <button
+        id="closeBtn"
+        class="btn btn-sm btn-link"
+        style="color: var(--bs-light); -webkit-app-region: no-drag"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- Sidebar (fixed, outside main content) -->
+    <nav class="sidebar" style="width: 280px; position: fixed; top: 44px; left: 0; bottom: 0; z-index: 1040; height: calc(100vh - 44px); background: var(--bs-secondary); color: var(--bs-dark);">
+      <div class="position-sticky h-100">
+        <div class="p-4">
+          <!-- User Profile Card -->
+          <div class="user-card rounded-3 p-3 mb-4" style="background: var(--bs-info); color: var(--bs-dark);">
+            <div class="d-flex align-items-center">
+              <img
+                src="../assets/icons/icon.png"
+                alt=""
+                width="48"
+                height="48"
+                class="rounded-circle bg-light p-1 me-3"
+              />
+              <div>
+                <h6 class="mb-1" style="color: var(--bs-dark);">User Profile</h6>
+                <span class="small" style="color: var(--bs-primary);">Settings & Preferences</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation Menu -->
+          <ul class="nav nav-pills flex-column gap-1">
+            <li class="nav-item w-100">
+              <button
+                class="nav-link active w-100 text-start d-flex align-items-center"
+                id="navDashboard"
+                style="background: var(--bs-primary); color: var(--bs-light);"
+              >
+                <i class="bi bi-grid-1x2-fill me-2"></i>
+                <span>Dashboard</span>
+              </button>
+            </li>
+            <li class="nav-item w-100">
+              <button
+                class="nav-link w-100 text-start d-flex align-items-center"
+                id="navMeetingPriority"
+                style="background: var(--bs-secondary); color: var(--bs-dark);"
+              >
+                <i class="bi bi-list-ol me-2"></i>
+                <span>Meeting Priority</span>
+              </button>
+            </li>
+          </ul>
+
+          <!-- Bottom Section -->
+          <div class="mt-auto pt-4">
+            <div class="rounded-3 p-3" style="background: var(--bs-info); color: var(--bs-dark);">
+              <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-info-circle-fill me-2" style="color: var(--bs-primary);"></i>
+                <span class="small" style="color: var(--bs-dark);">App Version 1.0.0</span>
+              </div>
+              <button class="btn btn-outline-primary btn-sm w-100" style="color: var(--bs-primary); border: 1px solid var(--bs-primary); background: transparent;">
+                <i class="bi bi-gear-fill me-2"></i>Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content Area (scrollable, with margin-left) -->
+    <main class="flex-grow-1" style="margin-left: 280px; margin-top: 44px; height: calc(100vh - 44px); overflow-y: auto; background: var(--bs-light); color: var(--bs-dark);">
+      <div class="container-fluid p-4">
+        <!-- Dashboard Section -->
+        <div id="dashboardSection">
+          <!-- Header -->
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h4 class="mb-1" style="color: var(--bs-dark);">Dashboard</h4>
+              <p class="mb-0" style="color: var(--bs-primary);">Meeting Detection & Management</p>
+            </div>
+            <div class="d-flex gap-2">
+              <div class="me-2">
+                <button id="detectMeetingAppsBtn" class="btn btn-primary" style="background: var(--bs-primary); color: var(--bs-light); border: none;">
+                  <i class="bi bi-search me-2"></i>
+                  <span>Detect Apps</span>
+                </button>
+              </div>
+              <div class="ms-2">
+                <button
+                  id="detectBrowserMeetingsBtn"
+                  class="btn btn-outline-primary"
+                  style="color: var(--bs-primary); border: 1px solid var(--bs-primary); background: transparent;"
+                >
+                  <i class="bi bi-browser-chrome me-2"></i>
+                  <span>Browser Meetings</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Meeting Status -->
+          <div id="meetingStatus" class="mb-4"></div>
+
+          <!-- Cards Grid -->
+          <div class="row g-4">
+            <!-- Meeting Apps Card -->
+            <div class="col-12 col-xl-6">
+              <div class="card h-100 border-0 shadow-sm" style="background: var(--bs-secondary); color: var(--bs-dark);">
+                <div class="card-header border-bottom" style="background: var(--bs-light); color: var(--bs-dark);">
+                  <div class="d-flex align-items-center">
+                    <div
+                      class="icon-box rounded-3 p-3 me-3"
+                      style="background: var(--bs-primary);"
+                    >
+                      <i class="bi bi-camera-video-fill fs-4" style="color: var(--bs-light);"></i>
+                    </div>
+                    <div>
+                      <h5 class="card-title mb-1" style="color: var(--bs-dark);">Meeting Applications</h5>
+                      <p class="card-subtitle small mb-0" style="color: var(--bs-primary);">
+                        Detected video conferencing apps
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body p-0">
+                  <ul
+                    id="meetingAppsList"
+                    class="list-group list-group-flush"
+                  ></ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Browser Meetings Card -->
+            <div class="col-12 col-xl-6">
+              <div class="card h-100 border-0 shadow-sm" style="background: var(--bs-secondary); color: var(--bs-dark);">
+                <div class="card-header border-bottom" style="background: var(--bs-light); color: var(--bs-dark);">
+                  <div class="d-flex align-items-center">
+                    <div
+                      class="icon-box rounded-3 p-3 me-3"
+                      style="background: var(--bs-info);"
+                    >
+                      <i class="bi bi-browser-chrome fs-4" style="color: var(--bs-light);"></i>
+                    </div>
+                    <div>
+                      <h5 class="card-title mb-1" style="color: var(--bs-dark);">Browser Meetings</h5>
+                      <p class="card-subtitle small mb-0" style="color: var(--bs-primary);">
+                        Detected browser-based meetings
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body p-0">
+                  <ul
+                    id="browserMeetingsList"
+                    class="list-group list-group-flush"
+                  ></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meeting Priority Section -->
+        <div id="meetingPrioritySection" style="display: none">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h4 class="mb-1" style="color: var(--bs-dark);">Meeting Priority</h4>
+              <p class="mb-0" style="color: var(--bs-primary);">
+                Configure app detection preferences
+              </p>
+            </div>
+            <button
+              id="savePriorityBtn"
+              class="btn btn-primary d-flex align-items-center"
+              style="background: var(--bs-primary); color: var(--bs-light); border: none;"
+            >
+              <i class="bi bi-save me-2"></i>
+              <span>Save Changes</span>
+            </button>
+          </div>
+
+          <div class="card border-0 shadow-sm" style="background: var(--bs-secondary); color: var(--bs-dark);">
+            <div class="card-header border-bottom" style="background: var(--bs-light); color: var(--bs-dark);">
+              <div class="d-flex align-items-center">
+                <div
+                  class="icon-box rounded-3 p-3 me-3"
+                  style="background: var(--bs-info);"
+                >
+                  <i class="bi bi-list-ol fs-4" style="color: var(--bs-light);"></i>
+                </div>
+                <div>
+                  <h5 class="card-title mb-1" style="color: var(--bs-dark);">Priority List</h5>
+                  <p class="card-subtitle small mb-0" style="color: var(--bs-primary);">
+                    Drag to reorder priority
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <ul id="meetingAppPriorityList" class="list-group mb-3"></ul>
+              <div class="d-flex gap-2">
+                <button
+                  id="moveUpBtn"
+                  class="btn btn-outline-primary btn-sm d-flex align-items-center"
+                  style="color: var(--bs-primary); border: 1px solid var(--bs-primary); background: transparent;"
+                >
+                  <i class="bi bi-arrow-up me-2"></i>Move Up
+                </button>
+                <button
+                  id="moveDownBtn"
+                  class="btn btn-outline-primary btn-sm d-flex align-items-center"
+                  style="color: var(--bs-primary); border: 1px solid var(--bs-primary); background: transparent;"
+                >
+                  <i class="bi bi-arrow-down me-2"></i>Move Down
+                </button>
+              </div>
+              <div
+                class="alert mt-3 mb-0 d-flex align-items-center"
+                style="background: var(--bs-info); color: var(--bs-dark); border: none;"
+              >
+                <i class="bi bi-info-circle-fill me-2" style="color: var(--bs-primary);"></i>
+                <small
+                  >The app at the top has the highest priority when multiple
+                  meetings are detected.</small
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div>
+      <!-- Meeting Alert -->
+      <div
+        id="meetingAlert"
+        class="alert alert-dismissible fade shadow-lg"
+        role="alert"
+        style="
+          position: fixed;
+          left: 0;
+          right: 0;
+          bottom: 20px;
+          margin: 0 auto;
+          width: 400px;
+          z-index: 9999;
+          display: none;
+          background: var(--bs-primary);
+          color: var(--bs-light);
+          border: none;
+        "
+      >
+        <div class="d-flex align-items-center">
+          <div class="icon-box rounded-3 p-2 me-3" style="background: var(--bs-info);">
+            <i class="bi bi-bell-fill" style="color: var(--bs-light);"></i>
+          </div>
+          <span id="meetingAlertMsg"></span>
+        </div>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+          id="dismissMeetingAlert"
+        ></button>
+      </div>
+    </div>
+    <style>
+      :root {
+        --sidebar-width: 280px;
+        --primary-rgb: 13, 110, 253;
+        --bs-primary-rgb: var(--primary-rgb);
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bs-body-bg);
+      }
+
+      .custom-titlebar {
+        background: var(--bs-dark);
+        border-bottom: 1px solid rgba(var(--bs-light-rgb), 0.1);
+        -webkit-app-region: drag;
+        user-select: none;
+      }
+
+      .custom-titlebar button {
+        -webkit-app-region: no-drag;
+      }
+
+      .sidebar {
+        height: 100%;
+        overflow-y: auto;
+      }
+
+      .card {
+        border-radius: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+      }
+
+      .card-header {
+        border-top-left-radius: 12px !important;
+        border-top-right-radius: 12px !important;
+      }
+
+      .list-group-item {
+        padding: 1rem 1.25rem;
+        border-left: 0;
+        border-right: 0;
+      }
+
+      .list-group-item:first-child {
+        border-top: 0;
+      }
+
+      .list-group-item:last-child {
+        border-bottom: 0;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        border-radius: 8px;
+      }
+
+      .icon-box {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .alert {
+        border: none;
+        border-radius: 12px;
+      }
+
+      /* Modern Scrollbar Styling */
+      ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgba(var(--bs-light-rgb), 0.2);
+        border-radius: 10px;
+        transition: background 0.2s ease;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(var(--bs-light-rgb), 0.3);
+      }
+
+      /* Dark theme scrollbar for sidebar */
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      /* Firefox scrollbar styling */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(var(--bs-light-rgb), 0.2) transparent;
+      }
+
+      .sidebar {
+        scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+      }
+    </style>
+    <script>
+      document.getElementById("closeBtn").onclick = () => window.close();
+      // Sidebar navigation logic
+      const dashboardSection = document.getElementById("dashboardSection");
+      const meetingPrioritySection = document.getElementById(
+        "meetingPrioritySection"
+      );
+      const navDashboard = document.getElementById("navDashboard");
+      const navMeetingPriority = document.getElementById("navMeetingPriority");
+      navDashboard.onclick = () => {
+        dashboardSection.style.display = "";
+        meetingPrioritySection.style.display = "none";
+        navDashboard.classList.add("active");
+        navMeetingPriority.classList.remove("active");
+      };
+      navMeetingPriority.onclick = () => {
+        dashboardSection.style.display = "none";
+        meetingPrioritySection.style.display = "";
+        navDashboard.classList.remove("active");
+        navMeetingPriority.classList.add("active");
+        loadPriority();
+      };
+      // Dashboard logic
+      const detectBtn = document.getElementById("detectMeetingAppsBtn");
+      const list = document.getElementById("meetingAppsList");
+
+      // Check if meetingAPI is available
+      if (!window.meetingAPI) {
+        console.error("Meeting API not available");
+        list.innerHTML =
+          '<li class="list-group-item text-danger">Meeting detection not available</li>';
+        if (detectBtn) detectBtn.disabled = true;
+      } else {
+        detectBtn.onclick = async () => {
+          list.innerHTML = '<li class="list-group-item">Detecting...</li>';
+          try {
+            const apps = await window.meetingAPI.detectApps();
+            if (apps.length === 0) {
+              list.innerHTML =
+                '<li class="list-group-item">No meeting apps detected.</li>';
+            } else {
+              list.innerHTML = "";
+              apps.forEach((app) => {
+                const li = document.createElement("li");
+                li.className = "list-group-item";
+                li.textContent = `${app.name} (${app.process})`;
+                list.appendChild(li);
+              });
+            }
+          } catch (err) {
+            console.error("Detection error:", err);
+            list.innerHTML = `<li class="list-group-item text-danger">Error: ${
+              err.message || err
+            }</li>`;
+          }
+        };
+      }
+
+      const detectBrowserBtn = document.getElementById(
+        "detectBrowserMeetingsBtn"
+      );
+      const browserList = document.getElementById("browserMeetingsList");
+
+      // Check if meetingAPI is available
+      if (!window.meetingAPI) {
+        console.error("Meeting API not available");
+        browserList.innerHTML =
+          '<li class="list-group-item text-danger">Meeting detection not available</li>';
+        if (detectBrowserBtn) detectBrowserBtn.disabled = true;
+      } else {
+        detectBrowserBtn.onclick = async () => {
+          browserList.innerHTML =
+            '<li class="list-group-item">Detecting...</li>';
+          try {
+            const meetings = await window.meetingAPI.detectBrowserWindows();
+            if (meetings.length === 0) {
+              browserList.innerHTML =
+                '<li class="list-group-item">No browser meetings detected.</li>';
+            } else {
+              browserList.innerHTML = "";
+              meetings.forEach((meeting) => {
+                const li = document.createElement("li");
+                li.className = "list-group-item";
+                li.textContent = `${meeting.name}: ${meeting.title}`;
+                browserList.appendChild(li);
+              });
+            }
+          } catch (err) {
+            console.error("Detection error:", err);
+            browserList.innerHTML = `<li class="list-group-item text-danger">Error: ${
+              err.message || err
+            }</li>`;
+          }
+        };
+      }
+
+      // Meeting App Priority logic
+      const priorityList = document.getElementById("meetingAppPriorityList");
+      const moveUpBtn = document.getElementById("moveUpBtn");
+      const moveDownBtn = document.getElementById("moveDownBtn");
+      const savePriorityBtn = document.getElementById("savePriorityBtn");
+      let selectedIdx = null;
+      let meetingAppPriority = [];
+      async function loadPriority() {
+        const settings = await window.settingsAPI.getSettings();
+        meetingAppPriority = settings.meetingAppPriority || [];
+        selectedIdx = null;
+        renderPriorityList();
+      }
+      function renderPriorityList() {
+        priorityList.innerHTML = "";
+        meetingAppPriority.forEach((app, idx) => {
+          const li = document.createElement("li");
+          li.className =
+            "list-group-item d-flex align-items-center" +
+            (selectedIdx === idx ? " active" : "");
+          li.textContent = app;
+          li.style.cursor = "pointer";
+          li.onclick = () => {
+            selectedIdx = idx;
+            renderPriorityList();
+          };
+          priorityList.appendChild(li);
+        });
+      }
+      moveUpBtn.onclick = () => {
+        if (selectedIdx > 0) {
+          [
+            meetingAppPriority[selectedIdx - 1],
+            meetingAppPriority[selectedIdx],
+          ] = [
+            meetingAppPriority[selectedIdx],
+            meetingAppPriority[selectedIdx - 1],
+          ];
+          selectedIdx--;
+          renderPriorityList();
+        }
+      };
+      moveDownBtn.onclick = () => {
+        if (
+          selectedIdx !== null &&
+          selectedIdx < meetingAppPriority.length - 1
+        ) {
+          [
+            meetingAppPriority[selectedIdx + 1],
+            meetingAppPriority[selectedIdx],
+          ] = [
+            meetingAppPriority[selectedIdx],
+            meetingAppPriority[selectedIdx + 1],
+          ];
+          selectedIdx++;
+          renderPriorityList();
+        }
+      };
+      savePriorityBtn.onclick = async () => {
+        await window.settingsAPI.setSettings({ meetingAppPriority });
+        alert("Meeting app priority saved!");
+      };
+      // Load priority list on first open
+      loadPriority();
+      // Meeting detection alert logic
+      const meetingAlert = document.getElementById("meetingAlert");
+      const meetingAlertMsg = document.getElementById("meetingAlertMsg");
+      const dismissMeetingAlert = document.getElementById(
+        "dismissMeetingAlert"
+      );
+      if (window.electron && window.electron.ipcRenderer) {
+        window.electron.ipcRenderer.on(
+          "meeting:detected",
+          (_event, newMeetings) => {
+            meetingAlertMsg.textContent = `Meeting detected: ${newMeetings.join(
+              ", "
+            )}`;
+            meetingAlert.style.display = "";
+            meetingAlert.classList.add("show");
+          }
+        );
+      } else if (window.api && window.api.receive) {
+        // For contextBridge-based preload
+        window.api.receive("meeting:detected", (newMeetings) => {
+          meetingAlertMsg.textContent = `Meeting detected: ${newMeetings.join(
+            ", "
+          )}`;
+          meetingAlert.style.display = "";
+          meetingAlert.classList.add("show");
+        });
+      }
+      dismissMeetingAlert.onclick = () => {
+        meetingAlert.classList.remove("show");
+        setTimeout(() => {
+          meetingAlert.style.display = "none";
+        }, 150);
+      };
+      // Meeting Status UI logic
+      const meetingStatusDiv = document.getElementById("meetingStatus");
+      if (!window.meetingAPI) {
+        console.error("Meeting API not available");
+        meetingStatusDiv.innerHTML =
+          '<div class="alert alert-danger">Meeting detection not available</div>';
+      } else {
+        window.meetingAPI.onMeetingDetected((summary) => {
+          if (!summary || !summary.primary) {
+            meetingStatusDiv.innerHTML =
+              '<div class="alert alert-secondary">No active meetings detected.</div>';
+            return;
+          }
+          let html = `<div class='alert alert-success mb-2'><strong>Primary Meeting:</strong> ${summary.primary.name} <small class='text-muted'>(${summary.primary.source})</small></div>`;
+          if (summary.conflicts && summary.conflicts.length > 0) {
+            html += `<div class='alert alert-warning'><strong>Conflicting Meetings Detected:</strong><ul class='mb-0'>`;
+            summary.conflicts.forEach((conflict) => {
+              html += `<li>${conflict.name} <small class='text-muted'>(${conflict.source})</small></li>`;
+            });
+            html += "</ul></div>";
+          }
+          meetingStatusDiv.innerHTML = html;
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Settings</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../node_modules/bootstrap-icons/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="app.css" />
+    <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+  <body>
+    <div
+      class="custom-titlebar bg-light d-flex align-items-center justify-content-between px-3 py-2"
+    >
+      <div class="d-flex align-items-center w-100">
+        <img
+          src="../assets/icons/icon.png"
+          alt="Logo"
+          style="height: 24px; margin-right: 10px"
+        />
+        <span class="fw-bold">Not-Krisp</span>
+      </div>
+      <button
+        id="closeBtn"
+        class="btn btn-sm btn-link text-secondary"
+        style="-webkit-app-region: no-drag"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    <div class="container mt-3 p-4">
+      <form id="settings-form">
+        <div class="mb-3 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="startWithWindows"
+          />
+          <label class="form-check-label" for="startWithWindows"
+            >Start with Windows</label
+          >
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="minimizeToTray" />
+          <label class="form-check-label" for="minimizeToTray"
+            >Minimize to Tray</label
+          >
+        </div>
+        <div class="mb-3">
+          <label for="micDeviceId" class="form-label">Microphone</label>
+          <select id="micDeviceId" class="form-select">
+            <option value="">Loading microphones...</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="speakerDeviceId" class="form-label">Speaker</label>
+          <select id="speakerDeviceId" class="form-select">
+            <option value="">Loading speakers...</option>
+          </select>
+        </div>
+      </form>
+    </div>
+    <style>
+      .custom-titlebar {
+        background: var(--bs-light);
+        border-bottom: 1px solid var(--bs-primary);
+        -webkit-app-region: drag;
+        user-select: none;
+      }
+      .custom-titlebar button {
+        -webkit-app-region: no-drag;
+        color: var(--bs-primary);
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bs-body-bg);
+        color: var(--bs-body-color);
+      }
+      .container {
+        margin-top: 24px !important;
+      }
+      /* Dropdown ellipsis fix */
+      select.form-select {
+        max-width: 100%;
+        width: 100%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        background: var(--bs-light);
+        color: var(--bs-dark);
+        border: 1px solid var(--bs-primary);
+      }
+      select.form-select option {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 350px;
+        background: var(--bs-light);
+        color: var(--bs-dark);
+      }
+      .form-check-input:checked {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+      }
+      .form-check-label {
+        color: var(--bs-dark);
+      }
+      .form-label {
+        color: var(--bs-dark);
+      }
+      .btn {
+        background: var(--bs-secondary);
+        color: var(--bs-dark);
+        border: 1px solid var(--bs-primary);
+        border-radius: 8px;
+        box-shadow: none !important;
+      }
+      .btn:active, .btn:focus, .btn.active {
+        background: var(--bs-primary);
+        color: var(--bs-light);
+        border: 1px solid var(--bs-primary);
+        box-shadow: none !important;
+      }
+      .btn-link {
+        background: transparent;
+        color: var(--bs-primary);
+        border: none;
+        box-shadow: none !important;
+      }
+    </style>
+    <script>
+      // Load settings and populate form
+      window.addEventListener("DOMContentLoaded", async () => {
+        const settings = await window.settingsAPI.getSettings();
+        const micSelect = document.getElementById("micDeviceId");
+        const speakerSelect = document.getElementById("speakerDeviceId");
+        const startWithWindows = document.getElementById("startWithWindows");
+        const minimizeToTray = document.getElementById("minimizeToTray");
+
+        async function updateDeviceDropdowns(devicesRaw) {
+          // Deduplicate by kind and label, skip empty labels
+          const seen = new Set();
+          const mics = [];
+          const speakers = [];
+          devicesRaw.forEach((device) => {
+            const key = `${device.kind}:${device.label}`;
+            if (!seen.has(key) && device.label) {
+              seen.add(key);
+              if (device.kind === "audioinput") mics.push(device);
+              if (device.kind === "audiooutput") speakers.push(device);
+            }
+          });
+          micSelect.innerHTML = "";
+          mics.forEach((device) => {
+            const option = document.createElement("option");
+            option.value = device.deviceId;
+            option.textContent = device.label;
+            micSelect.appendChild(option);
+          });
+          // Auto-select logic for microphone
+          if (
+            settings.micDeviceId &&
+            mics.some((d) => d.deviceId === settings.micDeviceId)
+          ) {
+            micSelect.value = settings.micDeviceId;
+          } else if (mics.some((d) => d.deviceId === "default")) {
+            micSelect.value = "default";
+          } else if (mics.length > 0) {
+            micSelect.value = mics[0].deviceId;
+          }
+          if (mics.length === 0) {
+            micSelect.innerHTML =
+              '<option value="">No microphones found</option>';
+          }
+          speakerSelect.innerHTML = "";
+          speakers.forEach((device) => {
+            const option = document.createElement("option");
+            option.value = device.deviceId;
+            option.textContent = device.label;
+            speakerSelect.appendChild(option);
+          });
+          // Auto-select logic for speaker
+          if (
+            settings.speakerDeviceId &&
+            speakers.some((d) => d.deviceId === settings.speakerDeviceId)
+          ) {
+            speakerSelect.value = settings.speakerDeviceId;
+          } else if (speakers.some((d) => d.deviceId === "default")) {
+            speakerSelect.value = "default";
+          } else if (speakers.length > 0) {
+            speakerSelect.value = speakers[0].deviceId;
+          }
+          if (speakers.length === 0) {
+            speakerSelect.innerHTML =
+              '<option value="">No speakers found</option>';
+          }
+        }
+
+        try {
+          await navigator.mediaDevices.getUserMedia({ audio: true });
+          const devicesRaw = await navigator.mediaDevices.enumerateDevices();
+          await updateDeviceDropdowns(devicesRaw);
+        } catch (err) {
+          micSelect.innerHTML =
+            '<option value="">Unable to load microphones</option>';
+          speakerSelect.innerHTML =
+            '<option value="">Unable to load speakers</option>';
+        }
+        startWithWindows.checked = settings.startWithWindows;
+        minimizeToTray.checked = settings.minimizeToTray;
+
+        // Add event listeners for instant save
+        startWithWindows.addEventListener("change", async () => {
+          await window.settingsAPI.setSettings({
+            startWithWindows: startWithWindows.checked,
+          });
+        });
+        minimizeToTray.addEventListener("change", async () => {
+          await window.settingsAPI.setSettings({
+            minimizeToTray: minimizeToTray.checked,
+          });
+        });
+        micSelect.addEventListener("change", async () => {
+          await window.settingsAPI.setSettings({
+            micDeviceId: micSelect.value || null,
+          });
+        });
+        speakerSelect.addEventListener("change", async () => {
+          await window.settingsAPI.setSettings({
+            speakerDeviceId: speakerSelect.value || null,
+          });
+        });
+
+        // Add tooltips to dropdown options for full device name
+        function addOptionTooltips(select) {
+          Array.from(select.options).forEach((option) => {
+            option.title = option.textContent;
+          });
+        }
+        addOptionTooltips(micSelect);
+        addOptionTooltips(speakerSelect);
+
+        // Listen for device changes in the renderer
+        if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
+          navigator.mediaDevices.addEventListener("devicechange", async () => {
+            console.log("Device change event detected");
+            try {
+              const devicesRaw =
+                await navigator.mediaDevices.enumerateDevices();
+              console.log("Devices after change:", devicesRaw);
+              await updateDeviceDropdowns(devicesRaw);
+            } catch (err) {
+              micSelect.innerHTML =
+                '<option value="">Unable to load microphones</option>';
+              speakerSelect.innerHTML =
+                '<option value="">Unable to load speakers</option>';
+            }
+          });
+        }
+      });
+      document.getElementById("closeBtn").onclick = () => window.close();
+    </script>
+  </body>
+</html>

@@ -3,31 +3,45 @@ version: '3.8'
 services:
   api:
     build:
-      context: ./app/backend
+      context: ./NotKrisp.Core
       dockerfile: Dockerfile
     ports:
-      - "5050:80"
-      - "5051:443"
+      - "5149:5149"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=db;Database=notkrisp;Username=postgres;Password=postgres
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
     depends_on:
-      - db
-    volumes:
-      - ./app/backend:/src
-      - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
-      - ~/.aspnet/https:/root/.aspnet/https:ro
+      db:
+        condition: service_healthy
+    networks:
+      - notkrisp-network
+    restart: unless-stopped
 
   db:
-    image: postgres:16
+    image: postgres:16-alpine
     environment:
+      - POSTGRES_DB=notkrisp
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=notkrisp
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - notkrisp-network
+    restart: unless-stopped
 
 volumes:
-  postgres_data: 
+  postgres_data:
+    name: notkrisp-postgres-data
+
+networks:
+  notkrisp-network:
+    name: notkrisp-network 
