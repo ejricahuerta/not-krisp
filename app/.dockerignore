@@ -1,0 +1,43 @@
+# .NET build output
+bin/
+obj/
+
+# Development files
+*.user
+*.suo
+*.vs
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Environment files
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+
+# Test files
+[Tt]est[Rr]esults/
+coverage/
+
+# Dependencies
+node_modules/
+packages/
+
+# Documentation
+README.md
+docs/
+
+# Temporary files
+*.swp
+*.*~
+*.tmp 
